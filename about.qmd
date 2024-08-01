@@ -1,0 +1,35 @@
+---
+title: "Kelly To"
+about:
+  id: about-kelly
+  template: trestles
+  image: images/headshot.jpg
+  image-shape: round
+  links:
+    - icon: linkedin
+      text: "LinkedIn"
+      href: https://www.linkedin.com/in/kellytoktvt/
+    - icon: github
+      text: "GitHub"
+      href: https://github.com/kellyktvt
+---
+
+:::{#about-kelly}
+Hi, I'm Kelly! I recently graduated from the University of Texas at Austin with a B.S. in Computational Biology and minors and certificates in Business, Computer Science, Statistics, and Pre-Health.
+
+My passion lies in exploring the convergence of technology, business, design, and healthcare. Specifically, I am drawn to iOS development, data analysis, and human-centered design, envisioning innovative solutions at the intersection.
+
+Just as my professional pursuits span  industries, my personal interests are equally diverse, including mechanical keyboards, interior design, and fashion. In my free time, you can find me spending time with loved ones, exploring the city's food scene, playing video games, or reading.
+:::
+
+## Education
+
+University of Texas at Austin | Austin, TX
+
+B.S. in Computational Biology | Aug 2020 - May 2024
+
+## Experience
+
+
+
+

@@ -1,0 +1,32 @@
+---
+title: "Kelly To"
+listing:
+  - id: landing-posts
+    contents: blog/posts
+    type: default
+    max-items: 3
+    sort: 
+      - "date desc"
+      - "title asc"
+about:
+  id: about-kelly
+  template: jolla
+  image: images/headshot.jpg
+  image-shape: round
+  links:
+    - icon: linkedin
+      text: "LinkedIn"
+      href: https://www.linkedin.com/in/kellytoktvt/
+    - icon: github
+      text: "GitHub"
+      href: https://github.com/kellyktvt
+back-to-top-navigation: false
+---
+
+:::{#about-kelly}
+
+:::
+
+
+## Blog
+Click [here](blog/index.qmd) to check out the latest blog posts.
