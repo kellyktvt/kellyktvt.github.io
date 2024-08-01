@@ -24,12 +24,13 @@ Just as my professional pursuits span  industries, my personal interests are equ
 
 ## Education
 
-University of Texas at Austin | Austin, TX
-
-B.S. in Computational Biology | Aug 2020 - May 2024
+<b> The University of Texas at Austin </b> <br> &emsp; B.S. in Computational Biology &nbsp; | &nbsp; Aug 2020 - May 2024
 
 ## Experience
 
+<b> The University of Texas at Austin </b> &nbsp; | &nbsp; Research Engineering/Scientist Associate &nbsp; | &nbsp; June 2024 - Present
 
+<b> BoBo </b> &nbsp; | &nbsp; Software Development Intern &nbsp; | &nbsp; March 2024 - Present
 
+<b> GIST </b> &nbsp; | &nbsp; User Research Intern &nbsp; | &nbsp; Nov 2021 - June 2022
 
