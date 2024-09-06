@@ -3,6 +3,9 @@
     "index.qmd": [
       "forblog/posts",
       "blog/posts"
+    ],
+    "blog/index.qmd": [
+      "posts"
     ]
   }
 }

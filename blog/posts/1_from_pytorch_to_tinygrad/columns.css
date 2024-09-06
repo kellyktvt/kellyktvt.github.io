@@ -1,0 +1,19 @@
+.multiple .column {
+  width: 40%;
+  margin: 10px;
+}
+
+.multiple .columns {
+  display: flex;
+}
+
+@media (max-width: 900px) {
+  .multiple .column {
+    width: auto;
+  }
+
+ .multiple .columns {
+   display: flex;
+   flex-direction: column;
+  }
+}

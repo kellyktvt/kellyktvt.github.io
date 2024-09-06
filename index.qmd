@@ -24,9 +24,7 @@ back-to-top-navigation: false
 ---
 
 :::{#about-kelly}
-
 :::
-
 
 ## Blog
 Click [here](blog/index.qmd) to check out the latest blog posts.

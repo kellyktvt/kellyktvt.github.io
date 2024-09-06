@@ -10,5 +10,14 @@
   },
   "blog/index.qmd": {
     "index.html": "95955b56"
+  },
+  "blog/posts/1_port_pytorch_to_tinygrad.qmd": {
+    "1_port_pytorch_to_tinygrad.html": "fea9b2cb"
+  },
+  "blog/posts/1_from_pytorch_to_tinygrad/1_from_pytorch_to_tinygrad.qmd": {
+    "1_from_pytorch_to_tinygrad.html": "2b10a940"
+  },
+  "blog/posts/1_from_pytorch_to_tinygrad/2_from_tinygrad_to_pytorch.qmd": {
+    "2_from_tinygrad_to_pytorch.html": "ef71fd54"
   }
 }

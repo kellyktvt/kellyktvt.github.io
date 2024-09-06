@@ -1,3 +1,26 @@
 ---
 title: "Blog"
+listing:
+  - id: posts
+    contents: posts
+    sort: 
+      - "date desc"
+      - "title asc"
+    categories: true
+    sort-ui: [date]
+    filter-ui: [title, date]
+    feed: true
+    type: default
+    page-size: 7
+    image-align: left
+    date-format: "DD MMMM YYYY"
+    fields: [title, author, date]
+format:
+  html:
+    page-layout: full
+website:
+  back-to-top-navigation: true
 ---
+
+:::{#posts}
+:::

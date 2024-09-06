@@ -1,0 +1,346 @@
+---
+title: From PyTorch to tinygrad
+description: Training a PyTorch model and transferring the weights to tinygrad.
+author: Kelly To
+date: '2024-09-06'
+categories: [PyTorch, tinygrad]
+css: columns.css
+---
+
+::::: {.multiple}
+
+-----
+
+:::: {.columns .column-screen-inset}
+::: column
+This post is the first of what will be a series documenting my explorations with comparing PyTorch and tinygrad, two deep learning frameworks. For the first couple of posts, I will be using the simple model from [tinygrad's MNIST tutorial](https://docs.tinygrad.org/mnist/). I wrote a PyTorch version of the code to compare the two frameworks. The experiment in this post involves training the PyTorch model and transferring the resulting weights to the tinygrad model to see if the two models produce the same probabilities.
+
+Below is a side-by-side comparison of the PyTorch and tinygrad code. tinygrad's API is quite similar to PyTorch's API, but there are some notable differences, including the use of 'Tensor' instead of 'torch'.
+:::
+::::
+
+<!---------- Device configuration ---------->
+
+:::: {.columns .column-screen-inset}
+::: column
+## Device configuration
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+###### The default device for PyTorch is CPU, but since I am using an M2 Macbook Air, I switched it to MPS for acceleration.
+#### PyTorch
+```python
+import torch
+
+if torch.backends.mps.is_available():
+    device = torch.device("mps")
+else:
+    device = torch.device("cpu")  
+print(device)
+```
+###### mps
+:::
+::: column
+###### For tinygrad, the default device is based on your system. In this case, it is METAL.
+#### tinygrad
+```python
+from tinygrad import Device
+
+print(Device.DEFAULT)
+```
+###### METAL
+:::
+::::
+
+<!---------- Model ---------->
+
+:::: {.columns .column-screen-inset}
+::: column
+## Model
+###### The model is a convolutional neural network with two convolutional layers and a linear layer. The convolutional layers have 32 and 64 filters, respectively. The linear layer has 10 output units, one for each digit. 
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+###### The PyTorch model inherits from nn.Module, which is a base class in PyTorch for creating models. It calls a forward method to apply the model to the input.
+#### PyTorch
+```python
+import torch.nn as nn
+import torch.nn.functional as F
+
+class Model(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.l1 = nn.Conv2d(1, 32, kernel_size=(3,3))
+        self.l2 = nn.Conv2d(32, 64, kernel_size=(3,3))
+        self.l3 = nn.Linear(1600, 10)
+
+    def forward(self, x):
+        x = F.max_pool2d(F.relu(self.l1(x)), (2,2))
+        x = F.max_pool2d(F.relu(self.l2(x)), (2,2))
+        return self.l3(F.dropout(x.flatten(1), 0.5, self.training))
+```
+:::
+::: column
+###### The tinygrad model is a simple class. Instead of having a forward method, it instead uses a __call__ method that functions like PyTorch's forward method.
+#### tinygrad
+```python
+from tinygrad import Tensor, nn
+
+class Model:
+  def __init__(self):
+    self.l1 = nn.Conv2d(1, 32, kernel_size=(3,3))
+    self.l2 = nn.Conv2d(32, 64, kernel_size=(3,3))
+    self.l3 = nn.Linear(1600, 10)
+
+  def __call__(self, x:Tensor) -> Tensor:
+    x = self.l1(x).relu().max_pool2d((2,2))
+    x = self.l2(x).relu().max_pool2d((2,2))
+    return self.l3(x.flatten(1).dropout(0.5))
+```
+:::
+::::
+
+<!---------- Get the MNIST dataset ---------->
+
+:::: {.columns .column-screen-inset}
+::: column
+## Get the MNIST dataset
+###### To get the MNIST dataset, I used tinygrad's mnist function for both models to keep things simple. I did have to convert the tinygrad tensors that were returned by the function into PyTorch tensors to use them in the PyTorch model. 
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+#### PyTorch
+```python
+from tinygrad.nn.datasets import mnist
+
+X_train, Y_train, X_test, Y_test = mnist()
+
+# Convert tinygrad Tensors to PyTorch tensors 
+X_train = torch.from_numpy(X_train.numpy()).float().reshape(-1, 1, 28, 28) 
+Y_train = torch.from_numpy(Y_train.numpy()).long()
+X_test = torch.from_numpy(X_test.numpy()).float().reshape(-1, 1, 28, 28) 
+Y_test = torch.from_numpy(Y_test.numpy()).long()
+
+print(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)
+```
+###### torch.Size([60000, 1, 28, 28]) torch.float32 torch.Size([60000]) torch.int64
+:::
+::: column
+#### tinygrad
+```python
+from tinygrad.nn.datasets import mnist
+
+X_train, Y_train, X_test, Y_test = mnist()
+print(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)
+```
+###### (60000, 1, 28, 28) dtypes.uchar (60000,) dtypes.uchar
+:::
+::::
+
+<!---------- Use the model ---------->
+
+:::: {.columns .column-screen-inset}
+::: column
+## Use the model
+###### The models are created and evaluated in the same way. 
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+#### PyTorch
+```python
+model = Model()
+acc = (model(X_test).argmax(axis=1) == Y_test).float().mean()
+print(acc.item())  
+```
+###### 0.1185000017285347
+:::
+::: column
+#### tinygrad
+```python
+model = Model()
+acc = (model(X_test).argmax(axis=1) == Y_test).mean()
+print(acc.item()) 
+```
+###### 0.10669999569654465
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+#### PyTorch
+###### The model is trained using the Adam optimizer and the negative log likelihood loss function. It is trained for 7000 steps and is evaluated on the test set after every 100 steps. 
+### Train the model
+###### It took 22 minutes and 28.9 seconds to train the model. This is slow but is probably due to the weak system of the Macbook that was used for the experiment.
+```python
+optimizer = torch.optim.Adam(model.parameters())
+batch_size = 128
+def training_step():
+    model.train()  # enables dropout
+    samples = torch.randint(high=X_train.shape[0], size=(batch_size,))
+    X, Y = X_train[samples], Y_train[samples]
+    optimizer.zero_grad()
+    outputs = model(X)
+    loss = F.nll_loss(F.log_softmax(outputs, dim=1), Y)
+    loss.backward()
+    optimizer.step()
+    return loss
+```
+```python
+train_losses = []
+test_losses = []
+
+train_accuracies = []
+test_accuracies = []
+
+for step in range(7000):
+    # Calculate train loss
+    loss = training_step()  
+    train_losses.append(loss.item())
+    
+    if step % 100 == 0:
+        model.eval()  # Disables dropout for evaluation
+        
+        with torch.no_grad():
+            # Calculate train accuracy
+            train_outputs = model(X_train)
+            train_acc = (train_outputs.argmax(dim=1) == Y_train).float().mean().item()
+            train_accuracies.append(train_acc)
+
+            # Calculate test accuracy
+            test_outputs = model(X_test)
+            test_acc = (test_outputs.argmax(dim=1) == Y_test).float().mean().item()
+            test_accuracies.append(test_acc)
+
+            # Calculate test loss
+            test_loss = F.nll_loss(F.log_softmax(model(X_test), dim=1), Y_test).item()
+            test_losses.append(test_loss)
+
+        print(f"step {step:4d}, loss {loss.item():.2f}, train acc {train_acc*100.:.2f}%, test acc {test_acc*100.:.2f}%")
+        model.train()  # Re-enables dropout for training
+```
+###### step    0, loss 32.27, train acc 9.41%, test acc 9.32%
+###### step  100, loss 0.13, train acc 94.93%, test acc 95.16%
+###### step  200, loss 0.10, train acc 96.54%, test acc 96.27%
+###### step  300, loss 0.18, train acc 97.18%, test acc 97.13%
+###### ...
+###### step 6600, loss 0.05, train acc 99.46%, test acc 98.83%
+###### step 6700, loss 0.04, train acc 99.47%, test acc 98.82%
+###### step 6800, loss 0.13, train acc 99.42%, test acc 98.84%
+###### step 6900, loss 0.01, train acc 99.49%, test acc 98.97%
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+### Plot the loss
+```python
+import matplotlib.pyplot as plt
+
+plt.figure(figsize=(10, 5))
+plt.plot(range(len(train_losses)), train_losses, label='Train Loss')
+plt.plot(range(0, len(test_losses) * 100, 100), test_losses, label='Test Loss') # every 100 steps
+plt.title('PyTorch: Train and Test Loss')
+plt.xlabel('Steps')
+plt.ylabel('Loss')
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+![](../../images/1_from_pytorch_to_tinygrad/pytorch_loss.png)
+:::
+::: column
+### Plot the accuracy
+```python
+plt.figure(figsize=(10, 5))
+plt.plot(range(0, len(train_accuracies) * 100, 100), train_accuracies, label='Train Accuracy')
+plt.plot(range(0, len(test_accuracies) * 100, 100), test_accuracies, label='Test Accuracy')
+plt.title('PyTorch: Train and Test Accuracy')
+plt.xlabel('Steps')
+plt.ylabel('Accuracy')
+plt.legend()
+plt.grid(True)
+plt.show()
+```
+![](../../images/1_from_pytorch_to_tinygrad/pytorch_accuracy.png)
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+### Save the weights
+###### To use the weights from the PyTorch model in the tinygrad model, I saved the weights as a NumPy array.
+```python
+pytorch_weights = {
+    'l1.weight': model.l1.weight.detach().numpy(),
+    'l1.bias': model.l1.bias.detach().numpy(),
+    'l2.weight': model.l2.weight.detach().numpy(),
+    'l2.bias': model.l2.bias.detach().numpy(),
+    'l3.weight': model.l3.weight.detach().numpy(),
+    'l3.bias': model.l3.bias.detach().numpy()
+}
+np.save('pytorch_weights.npy', pytorch_weights)
+```
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+#### tinygrad
+### Use the PyTorch weights
+###### Then, in my tinygrad model, I loaded the PyTorch weights and set them as the weights of the model. 
+```python
+import numpy as np
+
+loaded_weights = np.load('pytorch_weights.npy', allow_pickle=True).item()
+
+model.l1.weight = Tensor(loaded_weights['l1.weight'])
+model.l1.bias = Tensor(loaded_weights['l1.bias'])
+model.l2.weight = Tensor(loaded_weights['l2.weight'])
+model.l2.bias = Tensor(loaded_weights['l2.bias'])
+model.l3.weight = Tensor(loaded_weights['l3.weight'])
+model.l3.bias = Tensor(loaded_weights['l3.bias'])
+```
+:::
+::::
+
+<!---------- Final Probabilities ---------->
+
+:::: {.columns .column-screen-inset}
+::: column
+## Final Probabilities
+###### When comparing the probabilities produced by both models, we can see that they are very similar with negligible variations that can be attributed to floating-point precision differences.
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+#### PyTorch
+```python
+test_image = X_test[0:1]
+model.eval()
+with torch.no_grad():
+    pytorch_probs = F.softmax(model(test_image), dim=1).numpy()
+print("PyTorch probabilities:", pytorch_probs)
+```
+###### PyTorch probabilities: [[2.6173301e-14 4.2464991e-14 6.4881512e-08 4.5528865e-09 2.0712022e-17 4.9732735e-11 1.3766608e-21 9.9999988e-01 8.9217213e-13 8.5284235e-10]]
+:::
+::: column
+#### tinygrad
+```python
+test_image = X_test[0:1]
+tinygrad_probs = model(test_image).softmax().numpy()
+print("tinygrad probabilities:", tinygrad_probs)
+```
+###### tinygrad probabilities: [[2.6173244e-14 4.2464655e-14 6.4881434e-08 4.5528861e-09 2.0712009e-17 4.9732746e-11 1.3766536e-21 9.9999988e-01 8.9217121e-13 8.5283941e-10]]
+:::
+::::
+
+:::::
