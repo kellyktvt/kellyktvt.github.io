@@ -1,9 +1,9 @@
 ---
 title: From PyTorch to tinygrad
-description: Training a PyTorch model and transferring the weights to tinygrad.
+description: Training a PyTorch MNIST model and transferring the weights to tinygrad.
 author: Kelly To
 date: '2024-09-06'
-categories: [PyTorch, tinygrad]
+categories: [PyTorch, tinygrad, MNIST]
 css: columns.css
 ---
 
@@ -15,7 +15,7 @@ css: columns.css
 ::: column
 This post is the first of what will be a series documenting my explorations with comparing PyTorch and tinygrad, two deep learning frameworks. For the first couple of posts, I will be using the simple model from [tinygrad's MNIST tutorial](https://docs.tinygrad.org/mnist/). I wrote a PyTorch version of the code to compare the two frameworks. The experiment in this post involves training the PyTorch model and transferring the resulting weights to the tinygrad model to see if the two models produce the same probabilities.
 
-Below is a side-by-side comparison of the PyTorch and tinygrad code. tinygrad's API is quite similar to PyTorch's API, but there are some notable differences, including the use of 'Tensor' instead of 'torch'.
+I have the models in two files, 'pytorch_MNIST_start.ipynb' and 'tinygrad_MNIST_end.ipynb'. Below is a side-by-side comparison of the PyTorch and tinygrad code. tinygrad's API is quite similar to PyTorch's API, but there are some notable differences, including the use of 'Tensor' instead of 'torch'.
 :::
 ::::
 

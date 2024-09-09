@@ -8,7 +8,7 @@
 
 <meta name="author" content="Kelly To">
 <meta name="dcterms.date" content="2024-09-06">
-<meta name="description" content="Training a PyTorch model and transferring the weights to tinygrad.">
+<meta name="description" content="Training a PyTorch MNIST model and transferring the weights to tinygrad.">
 
 <title>Kelly To - From PyTorch to tinygrad</title>
 <style>
@@ -152,12 +152,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <div class="quarto-categories">
     <div class="quarto-category">PyTorch</div>
     <div class="quarto-category">tinygrad</div>
+    <div class="quarto-category">MNIST</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    Training a PyTorch model and transferring the weights to tinygrad.
+    Training a PyTorch MNIST model and transferring the weights to tinygrad.
   </div>
 </div>
 
@@ -189,7 +190,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="columns column-screen-inset">
 <div class="column">
 <p>This post is the first of what will be a series documenting my explorations with comparing PyTorch and tinygrad, two deep learning frameworks. For the first couple of posts, I will be using the simple model from <a href="https://docs.tinygrad.org/mnist/">tinygrad’s MNIST tutorial</a>. I wrote a PyTorch version of the code to compare the two frameworks. The experiment in this post involves training the PyTorch model and transferring the resulting weights to the tinygrad model to see if the two models produce the same probabilities.</p>
-<p>Below is a side-by-side comparison of the PyTorch and tinygrad code. tinygrad’s API is quite similar to PyTorch’s API, but there are some notable differences, including the use of ‘Tensor’ instead of ‘torch’.</p>
+<p>I have the models in two files, ‘pytorch_MNIST_start.ipynb’ and ‘tinygrad_MNIST_end.ipynb’. Below is a side-by-side comparison of the PyTorch and tinygrad code. tinygrad’s API is quite similar to PyTorch’s API, but there are some notable differences, including the use of ‘Tensor’ instead of ‘torch’.</p>
 </div>
 </div>
 <!---------- Device configuration ---------->
