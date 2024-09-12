@@ -264,12 +264,12 @@ plt.legend()
 plt.grid(True)
 plt.show()
 ```
-![](../../images/2_from_tinygrad_to_pytorch/tinygrad_loss.png)
+![](../images/2_from_tinygrad_to_pytorch/tinygrad_loss.png)
 :::
 ::: column
 ### Plot the accuracy
 ###### I've commented out the line plotting train_accuracies to still show the test accuracy.
-###### When I used only half of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the previous post.
+###### When I used only half of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the [previous post](/blog/posts/1_from_pytorch_to_tinygrad.qmd).
 ```python
 plt.figure(figsize=(10, 5))
 #plt.plot(range(0, len(train_accuracies) * 100, 100), train_accuracies, label='Train Accuracy')
@@ -281,7 +281,7 @@ plt.legend()
 plt.grid(True)
 plt.show()
 ```
-![](../../images/2_from_tinygrad_to_pytorch/tinygrad_accuracy.png)
+![](../images/2_from_tinygrad_to_pytorch/tinygrad_accuracy.png)
 :::
 ::::
 

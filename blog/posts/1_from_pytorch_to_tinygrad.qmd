@@ -254,7 +254,7 @@ plt.legend()
 plt.grid(True)
 plt.show()
 ```
-![](../../images/1_from_pytorch_to_tinygrad/pytorch_loss.png)
+![](../images/1_from_pytorch_to_tinygrad/pytorch_loss.png)
 :::
 ::: column
 ### Plot the accuracy
@@ -269,7 +269,7 @@ plt.legend()
 plt.grid(True)
 plt.show()
 ```
-![](../../images/1_from_pytorch_to_tinygrad/pytorch_accuracy.png)
+![](../images/1_from_pytorch_to_tinygrad/pytorch_accuracy.png)
 :::
 ::::
 

@@ -480,7 +480,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
 <span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
 <span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="../../images/2_from_tinygrad_to_pytorch/tinygrad_loss.png" class="img-fluid"></p>
+<p><img src="../images/2_from_tinygrad_to_pytorch/tinygrad_loss.png" class="img-fluid"></p>
 </section>
 </div><div class="column">
 <section id="plot-the-accuracy" class="level3">
@@ -489,7 +489,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h6 class="anchored" data-anchor-id="ive-commented-out-the-line-plotting-train_accuracies-to-still-show-the-test-accuracy.">I’ve commented out the line plotting train_accuracies to still show the test accuracy.</h6>
 </section>
 <section id="when-i-used-only-half-of-the-training-dataset-i-was-able-to-produce-a-plot-that-looks-very-similar-to-the-accuracy-plot-of-the-previous-post." class="level6">
-<h6 class="anchored" data-anchor-id="when-i-used-only-half-of-the-training-dataset-i-was-able-to-produce-a-plot-that-looks-very-similar-to-the-accuracy-plot-of-the-previous-post.">When I used only half of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the previous post.</h6>
+<h6 class="anchored" data-anchor-id="when-i-used-only-half-of-the-training-dataset-i-was-able-to-produce-a-plot-that-looks-very-similar-to-the-accuracy-plot-of-the-previous-post.">When I used only half of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the <a href="../../blog/posts/1_from_pytorch_to_tinygrad.html">previous post</a>.</h6>
 <div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.plot(range(0, len(train_accuracies) * 100, 100), train_accuracies, label='Train Accuracy')</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(test_accuracies) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">100</span>), test_accuracies, label<span class="op">=</span><span class="st">'Test Accuracy'</span>)</span>
@@ -499,7 +499,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>plt.legend()</span>
 <span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>plt.grid(<span class="va">True</span>)</span>
 <span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p><img src="../../images/2_from_tinygrad_to_pytorch/tinygrad_accuracy.png" class="img-fluid"></p>
+<p><img src="../images/2_from_tinygrad_to_pytorch/tinygrad_accuracy.png" class="img-fluid"></p>
 </section>
 </section>
 </div>
