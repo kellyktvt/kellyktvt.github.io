@@ -193,7 +193,7 @@
     "href": "blog/posts/4_tinygrad_MNIST_onnx.html",
     "title": "From PyTorch to tinygrad using ONNX",
     "section": "",
-    "text": "This post demonstrates how to use ONNX to get tinygrad to run a PyTorch model. This is an alternative to writing a whole tinygrad version of the PyTorch model you want to port, like we did in the post From PyTorch to tinygrad.\nThe PyTorch model I’m exporting is from the PyTorch file I used in that post, ‘pytorch_MNIST_start.ipynb’. The tinygrad code is in a separate file that I made called ‘tinygrad_MNIST_onnx.ipynb’. Below is the relevant code from the two files."
+    "text": "ONNX is an open source format that lets you use AI models across different frameworks. This post demonstrates how to use ONNX to get tinygrad to run a PyTorch model. This is an alternative to writing a whole tinygrad version of the PyTorch model you want to port, like we did in the post From PyTorch to tinygrad.\nThe PyTorch model I’m exporting is from the PyTorch file I used in that post, ‘pytorch_MNIST_start.ipynb’. The tinygrad code is in a separate file that I made called ‘tinygrad_MNIST_onnx.ipynb’. Below is the relevant code from the two files."
   },
   {
     "objectID": "blog/posts/4_tinygrad_MNIST_onnx.html#export-pytorch-model-as-an-onnx-model",
