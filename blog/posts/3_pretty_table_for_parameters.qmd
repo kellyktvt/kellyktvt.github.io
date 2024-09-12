@@ -1,0 +1,105 @@
+---
+title: Pretty Table for Parameters
+description: PyTorch and tinygrad versions of a function for displaying parameter counts
+author: Kelly To
+date: '2024-09-11'
+categories: [PyTorch, tinygrad, MNIST]
+css: columns.css
+---
+
+::::: {.multiple}
+
+-----
+
+:::: {.columns .column-screen-inset}
+::: column
+This post showcases a parameter counter function that displays the number of parameters for each layer in a model. The PyTorch version is from this [StackOverflow answer](https://stackoverflow.com/a/62508086/4975218). The tinygrad version is an adaptation of that function that I wrote to work with tinygrad.
+
+I tested the functions using the files from the post [From PyTorch to tinygrad](/blog/posts/1_from_pytorch_to_tinygrad.qmd). The functions were able to output the same parameter counts for both models, confirming that the models are the same. Below is a side-by-side comparison of the PyTorch and tinygrad code.
+:::
+::::
+
+:::: {.columns .column-screen-inset}
+::: column
+#### PyTorch
+```python
+from prettytable import PrettyTable
+
+def count_parameters(model):
+    table = PrettyTable(["Modules", "Parameters"])
+    total_params = 0
+    # PyTorch uses model.named_parameters() to iterate through the parameters
+    for name, parameter in model.named_parameters():
+        if not parameter.requires_grad:
+            continue
+        # PyTorch uses parameter.numel() to get the number of elements in a parameter tensor
+        params = parameter.numel()
+        table.add_row([name, params])
+        total_params += params
+    print(table)
+    print(f"Total Trainable Params: {total_params}\n")
+    return total_params
+
+count_parameters(model)
+```
+```text
++-----------+------------+
+|  Modules  | Parameters |
++-----------+------------+
+| l1.weight |    288     |
+|  l1.bias  |     32     |
+| l2.weight |   18432    |
+|  l2.bias  |     64     |
+| l3.weight |   16000    |
+|  l3.bias  |     10     |
++-----------+------------+
+Total Trainable Params: 34826
+
+34826
+```
+:::
+
+::: column
+#### tinygrad
+```python
+from prettytable import PrettyTable
+import numpy as np
+
+def count_parameters(model):
+    table = PrettyTable(["Modules", "Parameters"])
+    total_params = 0
+    # tinygrad manually defines layers and layer names, then iterates through them
+    layers = [model.l1, model.l2, model.l3]
+    layer_names = ['l1', 'l2', 'l3']
+    for layer, name in zip(layers, layer_names):
+        # tinygrad uses np.prod() to calculate parameter count by multiplying the dimensions within each tensor (weight and bias)
+        weight_params = np.prod(layer.weight.shape)
+        bias_params = np.prod(layer.bias.shape)
+        table.add_row([f"{name}.weight", weight_params])
+        table.add_row([f"{name}.bias", bias_params])
+        total_params += weight_params + bias_params
+    print(table)
+    print(f"Total Trainable Params: {total_params}\n")
+    return total_params
+
+count_parameters(model)
+```
+```text
++-----------+------------+
+|  Modules  | Parameters |
++-----------+------------+
+| l1.weight |    288     |
+|  l1.bias  |     32     |
+| l2.weight |   18432    |
+|  l2.bias  |     64     |
+| l3.weight |   16000    |
+|  l3.bias  |     10     |
++-----------+------------+
+Total Trainable Params: 34826
+
+np.int64(34826)
+```
+:::
+::::
+
+:::::

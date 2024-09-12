@@ -278,6 +278,8 @@ plt.show()
 ### Save the weights
 ###### To use the weights from the PyTorch model in the tinygrad model, I saved the weights as a NumPy array.
 ```python
+import numpy as np
+
 pytorch_weights = {
     'l1.weight': model.l1.weight.detach().numpy(),
     'l1.bias': model.l1.bias.detach().numpy(),

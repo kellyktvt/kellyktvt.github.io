@@ -19,5 +19,17 @@
   },
   "blog/posts/1_from_pytorch_to_tinygrad/2_from_tinygrad_to_pytorch.qmd": {
     "2_from_tinygrad_to_pytorch.html": "ef71fd54"
+  },
+  "blog/posts/3_pretty_table_for_parameters.qmd": {
+    "3_pretty_table_for_parameters.html": "929300d3"
+  },
+  "blog/posts/1_from_pytorch_to_tinygrad.qmd": {
+    "1_from_pytorch_to_tinygrad.html": "92d00583"
+  },
+  "blog/posts/2_from_tinygrad_to_pytorch.qmd": {
+    "2_from_tinygrad_to_pytorch.html": "1f0eaac2"
+  },
+  "blog/posts/tinygrad_MNIST_onnx.ipynb": {
+    "tinygrad_MNIST_onnx.html": "a17de076"
   }
 }
