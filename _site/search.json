@@ -187,5 +187,47 @@
     "title": "From PyTorch to tinygrad using ONNX",
     "section": "Get the MNIST dataset",
     "text": "Get the MNIST dataset\n\nI imported the MNIST dataset to grab an image to use to test the model.\n\nfrom tinygrad.nn.datasets import mnist\n\nX_train, Y_train, X_test, Y_test = mnist()\nprint(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)"
+  },
+  {
+    "objectID": "blog/posts/4_tinygrad_MNIST_onnx.html",
+    "href": "blog/posts/4_tinygrad_MNIST_onnx.html",
+    "title": "From PyTorch to tinygrad using ONNX",
+    "section": "",
+    "text": "This post demonstrates how to use ONNX to get tinygrad to run a PyTorch model. This is an alternative to writing a whole tinygrad version of the PyTorch model you want to port, like we did in the post From PyTorch to tinygrad.\nThe PyTorch model I’m exporting is from the PyTorch file I used in that post, ‘pytorch_MNIST_start.ipynb’. The tinygrad code is in a separate file that I made called ‘tinygrad_MNIST_onnx.ipynb’. Below is the relevant code from the two files."
+  },
+  {
+    "objectID": "blog/posts/4_tinygrad_MNIST_onnx.html#export-pytorch-model-as-an-onnx-model",
+    "href": "blog/posts/4_tinygrad_MNIST_onnx.html#export-pytorch-model-as-an-onnx-model",
+    "title": "From PyTorch to tinygrad using ONNX",
+    "section": "Export PyTorch model as an ONNX model",
+    "text": "Export PyTorch model as an ONNX model\n\nIn my ‘pytorch_MNIST_start.ipynb’ file, I added the following code to the end of the notebook to export the model as an ONNX model in a file called ‘mnist_model.onnx’.\n\nimport torch.onnx\n\ndummy_input = torch.randn(1, 1, 28, 28)\ntorch.onnx.export(model, \n                  dummy_input, \n                  \"mnist_model.onnx\")\n\n\n\n\ntinygrad"
+  },
+  {
+    "objectID": "blog/posts/4_tinygrad_MNIST_onnx.html#load-onnx-model-in-tinygrad",
+    "href": "blog/posts/4_tinygrad_MNIST_onnx.html#load-onnx-model-in-tinygrad",
+    "title": "From PyTorch to tinygrad using ONNX",
+    "section": "Load ONNX model in tinygrad",
+    "text": "Load ONNX model in tinygrad\n\nThis loads the ONNX model in tinygrad and creates a callable object ‘run_onnx’ that can execute the model.\n\nimport onnx\nfrom extra.onnx import get_run_onnx\n\nmodel = onnx.load(\"mnist_model.onnx\")\nrun_onnx = get_run_onnx(model)"
+  },
+  {
+    "objectID": "blog/posts/4_tinygrad_MNIST_onnx.html#count-parameters",
+    "href": "blog/posts/4_tinygrad_MNIST_onnx.html#count-parameters",
+    "title": "From PyTorch to tinygrad using ONNX",
+    "section": "Count parameters",
+    "text": "Count parameters\n\nI tweaked the ‘count_parameters’ function from the previous blog post, Pretty Table for Parameters, to work with ONNX models. Looking at the table, we can confirm that the ONNX model has the same number of parameters as the PyTorch model.\n\nfrom prettytable import PrettyTable\nimport numpy as np\n\ndef count_parameters(model):\n    table = PrettyTable([\"Modules\", \"Parameters\"])\n    total_params = 0\n    # ONNX uses model.graph.initializer to iterate through the parameters (nodes)\n    for node in model.graph.initializer:\n        # ONNX uses np.prod() to calculate parameter count by multiplying the dimensions (node.dims = parameter shape)\n        num_params = np.prod(node.dims)\n        table.add_row([node.name, num_params])\n        total_params += num_params\n    print(table)\n    print(f\"Total Trainable Params: {total_params}\\n\")\n    return total_params\n\ncount_parameters(model)\n\n+-----------+------------+\n|  Modules  | Parameters |\n+-----------+------------+\n| l1.weight |    288     |\n|  l1.bias  |     32     |\n| l2.weight |   18432    |\n|  l2.bias  |     64     |\n| l3.weight |   16000    |\n|  l3.bias  |     10     |\n+-----------+------------+\nTotal Trainable Params: 34826\n\n\n\nnp.int64(34826)"
+  },
+  {
+    "objectID": "blog/posts/4_tinygrad_MNIST_onnx.html#get-the-mnist-dataset",
+    "href": "blog/posts/4_tinygrad_MNIST_onnx.html#get-the-mnist-dataset",
+    "title": "From PyTorch to tinygrad using ONNX",
+    "section": "Get the MNIST dataset",
+    "text": "Get the MNIST dataset\n\nI imported the MNIST dataset to grab an image to use to test the model.\n\nfrom tinygrad.nn.datasets import mnist\n\nX_train, Y_train, X_test, Y_test = mnist()\nprint(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)"
+  },
+  {
+    "objectID": "blog/posts/4_tinygrad_MNIST_onnx.html#final-probabilities",
+    "href": "blog/posts/4_tinygrad_MNIST_onnx.html#final-probabilities",
+    "title": "From PyTorch to tinygrad using ONNX",
+    "section": "Final probabilities",
+    "text": "Final probabilities\n\nIf you refer back to the final tinygrad probabilities in From PyTorch to tinygrad, you will see that the values below are exactly the same.\n\n# Select the first test image\ntest_image = X_test[0:1]\n\n# Run the ONNX model using run_onnx function with the test image as input\n# The model expects an input with the key \"input.1\"\nonnx_output = run_onnx({\"input.1\": test_image})\n\n# Get the output tensor (single vector of 10 values, 1 for each digit class)\noutput_tensor = list(onnx_output.values())[0]\n\n# Apply softmax and convert to numpy\ntinygrad_probs = output_tensor.softmax().numpy()\n\n# Print the resulting probabilities\nprint(\"tinygrad probabilities:\", tinygrad_probs)\n\ntinygrad probabilities: [[2.6173244e-14 4.2464655e-14 6.4881434e-08 4.5528861e-09 2.0712009e-17\n  4.9732746e-11 1.3766536e-21 9.9999988e-01 8.9217121e-13 8.5283941e-10]]"
   }
 ]

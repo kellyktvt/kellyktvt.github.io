@@ -31,5 +31,8 @@
   },
   "blog/posts/tinygrad_MNIST_onnx.ipynb": {
     "tinygrad_MNIST_onnx.html": "a17de076"
+  },
+  "blog/posts/4_tinygrad_MNIST_onnx.ipynb": {
+    "4_tinygrad_MNIST_onnx.html": "876ae570"
   }
 }

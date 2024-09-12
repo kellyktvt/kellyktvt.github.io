@@ -2,7 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
-      "/blog/posts/tinygrad_MNIST_onnx.html",
+      "/blog/posts/4_tinygrad_MNIST_onnx.html",
       "/blog/posts/3_pretty_table_for_parameters.html",
       "/blog/posts/2_from_tinygrad_to_pytorch.html",
       "/blog/posts/1_from_pytorch_to_tinygrad.html"
@@ -11,7 +11,7 @@
   {
     "listing": "/blog/index.html",
     "items": [
-      "/blog/posts/tinygrad_MNIST_onnx.html",
+      "/blog/posts/4_tinygrad_MNIST_onnx.html",
       "/blog/posts/3_pretty_table_for_parameters.html",
       "/blog/posts/2_from_tinygrad_to_pytorch.html",
       "/blog/posts/1_from_pytorch_to_tinygrad.html"
