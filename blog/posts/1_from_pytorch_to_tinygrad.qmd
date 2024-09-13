@@ -186,7 +186,7 @@ def training_step():
     model.train()  # enables dropout
     samples = torch.randint(high=X_train.shape[0], size=(batch_size,))
     X, Y = X_train[samples], Y_train[samples]
-    optimizer.zero_grad()
+    optim.zero_grad()
     loss = F.nll_loss(F.log_softmax(model(X), dim=1), Y)
     loss.backward()
     optim.step()

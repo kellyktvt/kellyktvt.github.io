@@ -383,7 +383,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    model.train()  <span class="co"># enables dropout</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    samples <span class="op">=</span> torch.randint(high<span class="op">=</span>X_train.shape[<span class="dv">0</span>], size<span class="op">=</span>(batch_size,))</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    X, Y <span class="op">=</span> X_train[samples], Y_train[samples]</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    optimizer.zero_grad()</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    optim.zero_grad()</span>
 <span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> F.nll_loss(F.log_softmax(model(X), dim<span class="op">=</span><span class="dv">1</span>), Y)</span>
 <span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    loss.backward()</span>
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    optim.step()</span>
