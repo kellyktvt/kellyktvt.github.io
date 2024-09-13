@@ -180,17 +180,16 @@ print(acc.item())
 ### Train the model
 ###### It took 22 minutes and 28.9 seconds to train the model. This is slow but is probably due to the weak system of the Macbook that was used for the experiment.
 ```python
-optimizer = torch.optim.Adam(model.parameters())
+optim = torch.optim.Adam(model.parameters())
 batch_size = 128
 def training_step():
     model.train()  # enables dropout
     samples = torch.randint(high=X_train.shape[0], size=(batch_size,))
     X, Y = X_train[samples], Y_train[samples]
     optimizer.zero_grad()
-    outputs = model(X)
-    loss = F.nll_loss(F.log_softmax(outputs, dim=1), Y)
+    loss = F.nll_loss(F.log_softmax(model(X), dim=1), Y)
     loss.backward()
-    optimizer.step()
+    optim.step()
     return loss
 ```
 ```python
