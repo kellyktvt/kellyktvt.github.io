@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.6.32">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -10,7 +10,7 @@
 <meta name="dcterms.date" content="2024-09-09">
 <meta name="description" content="Training a tinygrad MNIST model and transferring the weights to PyTorch.">
 
-<title>Kelly To - From tinygrad to PyTorch</title>
+<title>From tinygrad to PyTorch – Kelly To</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -25,7 +25,7 @@ ul.task-list li input[type="checkbox"] {
 }
 /* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -36,7 +36,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -72,17 +72,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-2486e1f0a3ee9ee1fc393803a1361cdb.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-37a9c8c935c53f7c502ef0f5ab2a6d9e.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
   "collapse-after": 3,
   "panel-placement": "end",
   "type": "overlay",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -91,6 +97,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
@@ -106,35 +113,35 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
-    <nav class="navbar navbar-expand-lg navbar-dark ">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
-      <div class="navbar-brand-container">
+      <div class="navbar-brand-container mx-auto">
     <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Kelly To</span>
     </a>
   </div>
             <div id="quarto-search" class="" title="Search"></div>
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
   <span class="navbar-toggler-icon"></span>
 </button>
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="../../index.html" rel="" target="">
- <span class="menu-text">Home</span></a>
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../about.html" rel="" target="">
- <span class="menu-text">About</span></a>
+    <a class="nav-link" href="../../about.html"> 
+<span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="../../blog/index.html" rel="" target="">
- <span class="menu-text">Blog</span></a>
+    <a class="nav-link" href="../../blog/index.html"> 
+<span class="menu-text">Blog</span></a>
   </li>  
 </ul>
+          </div> <!-- /navcollapse -->
             <div class="quarto-navbar-tools">
 </div>
-          </div> <!-- /navcollapse -->
       </div> <!-- /container-fluid -->
     </nav>
 </header>
@@ -183,7 +190,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </div>
   
 
+
 </header>
+
 
 <div class="multiple page-columns page-full">
 <hr>
@@ -219,8 +228,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 </section>
 </div><div class="column">
-<section id="the-default-device-for-pytorch-is-cpu-but-since-i-am-using-an-m2-macbook-air-i-switched-it-to-mps-for-acceleration." class="level6">
-<h6 class="anchored" data-anchor-id="the-default-device-for-pytorch-is-cpu-but-since-i-am-using-an-m2-macbook-air-i-switched-it-to-mps-for-acceleration.">The default device for PyTorch is CPU, but since I am using an M2 Macbook Air, I switched it to MPS for acceleration.</h6>
+<section id="the-default-device-for-pytorch-is-cpu-but-since-i-am-using-an-m3-max-macbook-pro-i-switched-it-to-mps-for-acceleration." class="level6">
+<h6 class="anchored" data-anchor-id="the-default-device-for-pytorch-is-cpu-but-since-i-am-using-an-m3-max-macbook-pro-i-switched-it-to-mps-for-acceleration.">The default device for PyTorch is CPU, but since I am using an M3 Max Macbook Pro, I switched it to MPS for acceleration.</h6>
 </section>
 <section id="pytorch" class="level4">
 <h4 class="anchored" data-anchor-id="pytorch">PyTorch</h4>
@@ -322,10 +331,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>X_train, Y_train, X_test, Y_test <span class="op">=</span> mnist()</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert tinygrad Tensors to PyTorch tensors </span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> torch.from_numpy(X_train.numpy()).<span class="bu">float</span>().reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">28</span>, <span class="dv">28</span>) </span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>Y_train <span class="op">=</span> torch.from_numpy(Y_train.numpy()).<span class="bu">long</span>()</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> torch.from_numpy(X_test.numpy()).<span class="bu">float</span>().reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">28</span>, <span class="dv">28</span>) </span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>Y_test <span class="op">=</span> torch.from_numpy(Y_test.numpy()).<span class="bu">long</span>()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> torch.from_numpy(X_train.numpy()).<span class="bu">float</span>().reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">28</span>, <span class="dv">28</span>).to(device) </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>Y_train <span class="op">=</span> torch.from_numpy(Y_train.numpy()).<span class="bu">long</span>().to(device) </span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> torch.from_numpy(X_test.numpy()).<span class="bu">float</span>().reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">28</span>, <span class="dv">28</span>).to(device) </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>Y_test <span class="op">=</span> torch.from_numpy(Y_test.numpy()).<span class="bu">long</span>().to(device) </span>
 <span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="torch.size60000-1-28-28-torch.float32-torch.size60000-torch.int64" class="level6">
@@ -339,8 +348,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="column">
 <section id="use-the-model" class="level2">
 <h2 class="anchored" data-anchor-id="use-the-model">Use the model</h2>
-<section id="the-models-are-created-and-evaluated-in-the-same-way-as-the-previous-post.-for-the-pytorch-version-i-did-have-to-first-move-the-model-and-data-to-the-device-to-ensure-everything-is-on-mps." class="level6">
-<h6 class="anchored" data-anchor-id="the-models-are-created-and-evaluated-in-the-same-way-as-the-previous-post.-for-the-pytorch-version-i-did-have-to-first-move-the-model-and-data-to-the-device-to-ensure-everything-is-on-mps.">The models are created and evaluated in the same way as the previous post. For the Pytorch version, I did have to first move the model and data to the device to ensure everything is on mps.</h6>
+<section id="the-models-are-created-and-evaluated-in-the-same-way-as-the-previous-post." class="level6">
+<h6 class="anchored" data-anchor-id="the-models-are-created-and-evaluated-in-the-same-way-as-the-previous-post.">The models are created and evaluated in the same way as the previous post.</h6>
 </section>
 </section>
 </div>
@@ -353,22 +362,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> (model(X_test).argmax(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">==</span> Y_test).mean()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(acc.item())   </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="section" class="level6">
-<h6 class="anchored" data-anchor-id="section">0.085999995470047</h6>
+<h6 class="anchored" data-anchor-id="section">0.12680000066757202</h6>
 </section>
 </section>
 </div><div class="column">
 <section id="pytorch-3" class="level4">
 <h4 class="anchored" data-anchor-id="pytorch-3">PyTorch</h4>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> Model().to(device)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>X_train <span class="op">=</span> X_train.to(device)</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>Y_train <span class="op">=</span> Y_train.to(device)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>X_test <span class="op">=</span> X_test.to(device)</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>Y_test <span class="op">=</span> Y_test.to(device)</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> (model(X_test).argmax(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">==</span> Y_test).<span class="bu">float</span>().mean()</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(acc.item())  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> (model(X_test).argmax(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">==</span> Y_test).<span class="bu">float</span>().mean()</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(acc.item())  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <section id="section-1" class="level6">
-<h6 class="anchored" data-anchor-id="section-1">0.10029999911785126</h6>
+<h6 class="anchored" data-anchor-id="section-1">0.1168999969959259</h6>
 </section>
 </section>
 </div>
@@ -383,14 +387,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="train-the-model" class="level3">
 <h3 class="anchored" data-anchor-id="train-the-model">Train the model</h3>
-<section id="it-took-3-minutes-and-31.9-seconds-to-train-the-model.-this-is-much-faster-than-the-pytorch-model." class="level6">
-<h6 class="anchored" data-anchor-id="it-took-3-minutes-and-31.9-seconds-to-train-the-model.-this-is-much-faster-than-the-pytorch-model.">It took 3 minutes and 31.9 seconds to train the model. This is much faster than the PyTorch model.</h6>
+<section id="it-took-1-minute-and-24.6-seconds-to-train-the-model.-this-is-slower-than-the-pytorch-model-which-took-50.4-seconds-to-train-but-is-still-pretty-comparable." class="level6">
+<h6 class="anchored" data-anchor-id="it-took-1-minute-and-24.6-seconds-to-train-the-model.-this-is-slower-than-the-pytorch-model-which-took-50.4-seconds-to-train-but-is-still-pretty-comparable.">It took 1 minute and 24.6 seconds to train the model. This is slower than the PyTorch model, which took 50.4 seconds to train, but is still pretty comparable.</h6>
 </section>
-<section id="one-issue-i-ran-into-due-to-my-weak-laptop-is-tracking-train-accuracy.-ive-commented-out-the-related-code.-the-line-of-code-defining-train_acc-gives-me-this-memory-error-metal-oom-while-allocating-size5191680000." class="level6">
-<h6 class="anchored" data-anchor-id="one-issue-i-ran-into-due-to-my-weak-laptop-is-tracking-train-accuracy.-ive-commented-out-the-related-code.-the-line-of-code-defining-train_acc-gives-me-this-memory-error-metal-oom-while-allocating-size5191680000.">One issue I ran into due to my weak laptop is tracking train accuracy. I’ve commented out the related code. The line of code defining train_acc gives me this memory error: ‘Metal OOM while allocating size=5191680000’.</h6>
+<section id="one-issue-i-ran-into-was-tracking-train-accuracy.-ive-commented-out-the-related-code.-when-using-the-entire-training-dataset-the-line-of-code-defining-train_acc-gives-me-this-runtime-error-4426058304.-when-using-half-of-the-training-dataset-the-same-line-gives-me-this-memory-error-metal-oom-while-allocating-size2595840000." class="level6">
+<h6 class="anchored" data-anchor-id="one-issue-i-ran-into-was-tracking-train-accuracy.-ive-commented-out-the-related-code.-when-using-the-entire-training-dataset-the-line-of-code-defining-train_acc-gives-me-this-runtime-error-4426058304.-when-using-half-of-the-training-dataset-the-same-line-gives-me-this-memory-error-metal-oom-while-allocating-size2595840000.">One issue I ran into was tracking train accuracy. I’ve commented out the related code. When using the entire training dataset, the line of code defining train_acc gives me this runtime error: ‘4426058304’. When using half of the training dataset, the same line gives me this memory error: ‘Metal OOM while allocating size=2595840000’.</h6>
 </section>
-<section id="if-i-only-use-half-of-the-training-dataset-it-runs-just-fine-completing-training-in-5-minutes-and-5.6-seconds." class="level6">
-<h6 class="anchored" data-anchor-id="if-i-only-use-half-of-the-training-dataset-it-runs-just-fine-completing-training-in-5-minutes-and-5.6-seconds.">If I only use half of the training dataset, it runs just fine, completing training in 5 minutes and 5.6 seconds.</h6>
+<section id="if-i-only-use-a-third-of-the-training-dataset-it-runs-just-fine-completing-training-in-58.6s." class="level6">
+<h6 class="anchored" data-anchor-id="if-i-only-use-a-third-of-the-training-dataset-it-runs-just-fine-completing-training-in-58.6s.">If I only use a third of the training dataset, it runs just fine, completing training in 58.6s.</h6>
 <div class="sourceCode" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>optim <span class="op">=</span> nn.optim.Adam(nn.state.get_parameters(model))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">128</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> step():</span>
@@ -435,32 +439,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>        <span class="co">#print(f"step {step:4d}, loss {loss.item():.2f}, train acc {train_acc*100.:.2f}%, test acc {test_acc*100.:.2f}%")</span></span>
 <span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"step </span><span class="sc">{</span>step<span class="sc">:4d}</span><span class="ss">, loss </span><span class="sc">{</span>loss<span class="sc">.</span>item()<span class="sc">:.2f}</span><span class="ss">, test acc </span><span class="sc">{</span>test_acc<span class="op">*</span><span class="fl">100.</span><span class="sc">:.2f}</span><span class="ss">%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="step-0-loss-29.70-test-acc-15.74" class="level6">
-<h6 class="anchored" data-anchor-id="step-0-loss-29.70-test-acc-15.74">step 0, loss 29.70, test acc 15.74%</h6>
+<section id="step-0-loss-36.39-test-acc-22.92" class="level6">
+<h6 class="anchored" data-anchor-id="step-0-loss-36.39-test-acc-22.92">step 0, loss 36.39, test acc 22.92%</h6>
 </section>
-<section id="step-100-loss-0.32-test-acc-94.64" class="level6">
-<h6 class="anchored" data-anchor-id="step-100-loss-0.32-test-acc-94.64">step 100, loss 0.32, test acc 94.64%</h6>
+<section id="step-100-loss-0.38-test-acc-93.78" class="level6">
+<h6 class="anchored" data-anchor-id="step-100-loss-0.38-test-acc-93.78">step 100, loss 0.38, test acc 93.78%</h6>
 </section>
-<section id="step-200-loss-0.24-test-acc-96.40" class="level6">
-<h6 class="anchored" data-anchor-id="step-200-loss-0.24-test-acc-96.40">step 200, loss 0.24, test acc 96.40%</h6>
+<section id="step-200-loss-0.65-test-acc-96.03" class="level6">
+<h6 class="anchored" data-anchor-id="step-200-loss-0.65-test-acc-96.03">step 200, loss 0.65, test acc 96.03%</h6>
 </section>
-<section id="step-300-loss-0.29-test-acc-97.26" class="level6">
-<h6 class="anchored" data-anchor-id="step-300-loss-0.29-test-acc-97.26">step 300, loss 0.29, test acc 97.26%</h6>
+<section id="step-300-loss-0.23-test-acc-96.56" class="level6">
+<h6 class="anchored" data-anchor-id="step-300-loss-0.23-test-acc-96.56">step 300, loss 0.23, test acc 96.56%</h6>
 </section>
 <section id="section-2" class="level6">
 <h6 class="anchored" data-anchor-id="section-2">…</h6>
 </section>
-<section id="step-6600-loss-0.02-test-acc-98.94" class="level6">
-<h6 class="anchored" data-anchor-id="step-6600-loss-0.02-test-acc-98.94">step 6600, loss 0.02, test acc 98.94%</h6>
+<section id="step-6600-loss-0.14-test-acc-98.93" class="level6">
+<h6 class="anchored" data-anchor-id="step-6600-loss-0.14-test-acc-98.93">step 6600, loss 0.14, test acc 98.93%</h6>
 </section>
-<section id="step-6700-loss-0.02-test-acc-98.89" class="level6">
-<h6 class="anchored" data-anchor-id="step-6700-loss-0.02-test-acc-98.89">step 6700, loss 0.02, test acc 98.89%</h6>
+<section id="step-6700-loss-0.07-test-acc-98.90" class="level6">
+<h6 class="anchored" data-anchor-id="step-6700-loss-0.07-test-acc-98.90">step 6700, loss 0.07, test acc 98.90%</h6>
 </section>
-<section id="step-6800-loss-0.11-test-acc-98.80" class="level6">
-<h6 class="anchored" data-anchor-id="step-6800-loss-0.11-test-acc-98.80">step 6800, loss 0.11, test acc 98.80%</h6>
+<section id="step-6800-loss-0.05-test-acc-98.94" class="level6">
+<h6 class="anchored" data-anchor-id="step-6800-loss-0.05-test-acc-98.94">step 6800, loss 0.05, test acc 98.94%</h6>
 </section>
-<section id="step-6900-loss-0.01-test-acc-98.83" class="level6">
-<h6 class="anchored" data-anchor-id="step-6900-loss-0.01-test-acc-98.83">step 6900, loss 0.01, test acc 98.83%</h6>
+<section id="step-6900-loss-0.03-test-acc-98.88" class="level6">
+<h6 class="anchored" data-anchor-id="step-6900-loss-0.03-test-acc-98.88">step 6900, loss 0.03, test acc 98.88%</h6>
 </section>
 </section>
 </div>
@@ -485,13 +489,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div><div class="column">
 <section id="plot-the-accuracy" class="level3">
 <h3 class="anchored" data-anchor-id="plot-the-accuracy">Plot the accuracy</h3>
-<section id="ive-commented-out-the-line-plotting-train_accuracies-to-still-show-the-test-accuracy." class="level6">
-<h6 class="anchored" data-anchor-id="ive-commented-out-the-line-plotting-train_accuracies-to-still-show-the-test-accuracy.">I’ve commented out the line plotting train_accuracies to still show the test accuracy.</h6>
+<section id="keep-in-mind-that-there-is-no-train-accuracy-line-due-to-the-memory-error." class="level6">
+<h6 class="anchored" data-anchor-id="keep-in-mind-that-there-is-no-train-accuracy-line-due-to-the-memory-error.">Keep in mind that there is no train accuracy line due to the memory error.</h6>
 </section>
-<section id="when-i-used-only-half-of-the-training-dataset-i-was-able-to-produce-a-plot-that-looks-very-similar-to-the-accuracy-plot-of-the-previous-post." class="level6">
-<h6 class="anchored" data-anchor-id="when-i-used-only-half-of-the-training-dataset-i-was-able-to-produce-a-plot-that-looks-very-similar-to-the-accuracy-plot-of-the-previous-post.">When I used only half of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the <a href="../../blog/posts/1_from_pytorch_to_tinygrad.html">previous post</a>.</h6>
+<section id="when-i-used-only-a-third-of-the-training-dataset-i-was-able-to-produce-a-plot-that-looks-very-similar-to-the-accuracy-plot-of-the-previous-post." class="level6">
+<h6 class="anchored" data-anchor-id="when-i-used-only-a-third-of-the-training-dataset-i-was-able-to-produce-a-plot-that-looks-very-similar-to-the-accuracy-plot-of-the-previous-post.">When I used only a third of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the <a href="../../blog/posts/1_from_pytorch_to_tinygrad.html">previous post</a>.</h6>
 <div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">5</span>))</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">#plt.plot(range(0, len(train_accuracies) * 100, 100), train_accuracies, label='Train Accuracy')</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(train_accuracies) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">100</span>), train_accuracies, label<span class="op">=</span><span class="st">'Train Accuracy'</span>)</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>plt.plot(<span class="bu">range</span>(<span class="dv">0</span>, <span class="bu">len</span>(test_accuracies) <span class="op">*</span> <span class="dv">100</span>, <span class="dv">100</span>), test_accuracies, label<span class="op">=</span><span class="st">'Test Accuracy'</span>)</span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">'Tinygrad: Train and Test Accuracy'</span>)</span>
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">'Steps'</span>)</span>
@@ -566,8 +570,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>test_image <span class="op">=</span> X_test[<span class="dv">0</span>:<span class="dv">1</span>]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>tinygrad_probs <span class="op">=</span> model(test_image).softmax().numpy()</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"tinygrad probabilities:"</span>, tinygrad_probs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="tinygrad-probabilities-2.9119146e-10-2.2247503e-13-1.2900699e-08-1.1292180e-08-5.5392816e-15-2.1924421e-14-7.2358327e-19-1.0000000e00-2.9422734e-12-5.7311561e-10" class="level6">
-<h6 class="anchored" data-anchor-id="tinygrad-probabilities-2.9119146e-10-2.2247503e-13-1.2900699e-08-1.1292180e-08-5.5392816e-15-2.1924421e-14-7.2358327e-19-1.0000000e00-2.9422734e-12-5.7311561e-10">tinygrad probabilities: [[2.9119146e-10 2.2247503e-13 1.2900699e-08 1.1292180e-08 5.5392816e-15 2.1924421e-14 7.2358327e-19 1.0000000e+00 2.9422734e-12 5.7311561e-10]]</h6>
+<section id="tinygrad-probabilities-9.3983861e-09-6.8721730e-11-7.7753964e-07-5.7046219e-07-4.1008310e-13-8.9367888e-11-2.8149701e-17-9.9999869e-01-2.8185179e-10-4.4023501e-08" class="level6">
+<h6 class="anchored" data-anchor-id="tinygrad-probabilities-9.3983861e-09-6.8721730e-11-7.7753964e-07-5.7046219e-07-4.1008310e-13-8.9367888e-11-2.8149701e-17-9.9999869e-01-2.8185179e-10-4.4023501e-08">tinygrad probabilities: [[9.3983861e-09 6.8721730e-11 7.7753964e-07 5.7046219e-07 4.1008310e-13 8.9367888e-11 2.8149701e-17 9.9999869e-01 2.8185179e-10 4.4023501e-08]]</h6>
 </section>
 </section>
 </div><div class="column">
@@ -578,8 +582,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    pytorch_probs <span class="op">=</span> F.softmax(model(test_image), dim<span class="op">=</span><span class="dv">1</span>).cpu().numpy()</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"PyTorch probabilities:"</span>, pytorch_probs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="pytorch-probabilities-2.91191266e-10-2.22475182e-13-1.29006885e-08-1.12921708e-08-5.53927911e-15-2.19244111e-14-7.23579291e-19-1.00000000e00-2.94227511e-12-5.73115444e-10" class="level6">
-<h6 class="anchored" data-anchor-id="pytorch-probabilities-2.91191266e-10-2.22475182e-13-1.29006885e-08-1.12921708e-08-5.53927911e-15-2.19244111e-14-7.23579291e-19-1.00000000e00-2.94227511e-12-5.73115444e-10">PyTorch probabilities: [[2.91191266e-10 2.22475182e-13 1.29006885e-08 1.12921708e-08 5.53927911e-15 2.19244111e-14 7.23579291e-19 1.00000000e+00 2.94227511e-12 5.73115444e-10]]</h6>
+<section id="pytorch-probabilities-9.3983630e-09-6.8721799e-11-7.7754157e-07-5.7046429e-07-4.1008307e-13-8.9367916e-11-2.8149701e-17-9.9999857e-01-2.8185207e-10-4.4023473e-08" class="level6">
+<h6 class="anchored" data-anchor-id="pytorch-probabilities-9.3983630e-09-6.8721799e-11-7.7754157e-07-5.7046429e-07-4.1008307e-13-8.9367916e-11-2.8149701e-17-9.9999857e-01-2.8185207e-10-4.4023473e-08">PyTorch probabilities: [[9.3983630e-09 6.8721799e-11 7.7754157e-07 5.7046429e-07 4.1008307e-13 8.9367916e-11 2.8149701e-17 9.9999857e-01 2.8185207e-10 4.4023473e-08]]</h6>
 </section>
 </section>
 </div>
@@ -624,18 +628,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -667,11 +660,50 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
-  function tippyHover(el, contentFn) {
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -681,8 +713,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -694,7 +735,130 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -738,6 +902,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -763,6 +928,32 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -823,6 +1014,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
+
 
 
 

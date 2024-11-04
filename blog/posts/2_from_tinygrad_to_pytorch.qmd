@@ -40,7 +40,7 @@ print(Device.DEFAULT)
 ###### METAL
 :::
 ::: column
-###### The default device for PyTorch is CPU, but since I am using an M2 Macbook Air, I switched it to MPS for acceleration.
+###### The default device for PyTorch is CPU, but since I am using an M3 Max Macbook Pro, I switched it to MPS for acceleration.
 #### PyTorch
 ```python
 import torch
@@ -133,10 +133,10 @@ from tinygrad.nn.datasets import mnist
 X_train, Y_train, X_test, Y_test = mnist()
 
 # Convert tinygrad Tensors to PyTorch tensors 
-X_train = torch.from_numpy(X_train.numpy()).float().reshape(-1, 1, 28, 28) 
-Y_train = torch.from_numpy(Y_train.numpy()).long()
-X_test = torch.from_numpy(X_test.numpy()).float().reshape(-1, 1, 28, 28) 
-Y_test = torch.from_numpy(Y_test.numpy()).long()
+X_train = torch.from_numpy(X_train.numpy()).float().reshape(-1, 1, 28, 28).to(device) 
+Y_train = torch.from_numpy(Y_train.numpy()).long().to(device) 
+X_test = torch.from_numpy(X_test.numpy()).float().reshape(-1, 1, 28, 28).to(device) 
+Y_test = torch.from_numpy(Y_test.numpy()).long().to(device) 
 
 print(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)
 ```
@@ -149,7 +149,7 @@ print(X_train.shape, X_train.dtype, Y_train.shape, Y_train.dtype)
 :::: {.columns .column-screen-inset}
 ::: column
 ## Use the model
-###### The models are created and evaluated in the same way as the previous post. For the Pytorch version, I did have to first move the model and data to the device to ensure everything is on mps.
+###### The models are created and evaluated in the same way as the previous post.
 :::
 ::::
 
@@ -161,21 +161,16 @@ model = Model()
 acc = (model(X_test).argmax(axis=1) == Y_test).mean()
 print(acc.item())   
 ```
-###### 0.085999995470047
+###### 0.12680000066757202
 :::
 ::: column
 #### PyTorch
 ```python 
 model = Model().to(device)
-X_train = X_train.to(device)
-Y_train = Y_train.to(device)
-X_test = X_test.to(device)
-Y_test = Y_test.to(device)
-
 acc = (model(X_test).argmax(axis=1) == Y_test).float().mean()
 print(acc.item())  
 ```
-###### 0.10029999911785126
+###### 0.1168999969959259
 :::
 ::::
 
@@ -184,9 +179,9 @@ print(acc.item())
 #### tinygrad
 ###### The model is trained using the Adam optimizer and the sparse categorical cross entropy loss function. It is trained for 7000 steps and is evaluated on the test set after every 100 steps. 
 ### Train the model
-###### It took 3 minutes and 31.9 seconds to train the model. This is much faster than the PyTorch model.
-###### One issue I ran into due to my weak laptop is tracking train accuracy. I've commented out the related code. The line of code defining train_acc gives me this memory error: 'Metal OOM while allocating size=5191680000'. 
-###### If I only use half of the training dataset, it runs just fine, completing training in 5 minutes and 5.6 seconds. 
+###### It took 1 minute and 24.6 seconds to train the model. This is slower than the PyTorch model, which took 50.4 seconds to train, but is still pretty comparable.
+###### One issue I ran into was tracking train accuracy. I've commented out the related code. When using the entire training dataset, the line of code defining train_acc gives me this runtime error: '4426058304'. When using half of the training dataset, the same line gives me this memory error: 'Metal OOM while allocating size=2595840000'.
+###### If I only use a third of the training dataset, it runs just fine, completing training in 58.6s. 
 ```python
 optim = nn.optim.Adam(nn.state.get_parameters(model))
 batch_size = 128
@@ -236,15 +231,15 @@ for step in range(7000):
         #print(f"step {step:4d}, loss {loss.item():.2f}, train acc {train_acc*100.:.2f}%, test acc {test_acc*100.:.2f}%")
         print(f"step {step:4d}, loss {loss.item():.2f}, test acc {test_acc*100.:.2f}%")
 ```
-###### step    0, loss 29.70, test acc 15.74%
-###### step  100, loss 0.32, test acc 94.64%
-###### step  200, loss 0.24, test acc 96.40%
-###### step  300, loss 0.29, test acc 97.26%
+###### step    0, loss 36.39, test acc 22.92%
+###### step  100, loss 0.38, test acc 93.78%
+###### step  200, loss 0.65, test acc 96.03%
+###### step  300, loss 0.23, test acc 96.56%
 ###### ...
-###### step 6600, loss 0.02, test acc 98.94%
-###### step 6700, loss 0.02, test acc 98.89%
-###### step 6800, loss 0.11, test acc 98.80%
-###### step 6900, loss 0.01, test acc 98.83%
+###### step 6600, loss 0.14, test acc 98.93%
+###### step 6700, loss 0.07, test acc 98.90%
+###### step 6800, loss 0.05, test acc 98.94%
+###### step 6900, loss 0.03, test acc 98.88%
 :::
 ::::
 
@@ -268,11 +263,11 @@ plt.show()
 :::
 ::: column
 ### Plot the accuracy
-###### I've commented out the line plotting train_accuracies to still show the test accuracy.
-###### When I used only half of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the [previous post](/blog/posts/1_from_pytorch_to_tinygrad.qmd).
+###### Keep in mind that there is no train accuracy line due to the memory error.
+###### When I used only a third of the training dataset, I was able to produce a plot that looks very similar to the accuracy plot of the [previous post](/blog/posts/1_from_pytorch_to_tinygrad.qmd).
 ```python
 plt.figure(figsize=(10, 5))
-#plt.plot(range(0, len(train_accuracies) * 100, 100), train_accuracies, label='Train Accuracy')
+plt.plot(range(0, len(train_accuracies) * 100, 100), train_accuracies, label='Train Accuracy')
 plt.plot(range(0, len(test_accuracies) * 100, 100), test_accuracies, label='Test Accuracy')
 plt.title('Tinygrad: Train and Test Accuracy')
 plt.xlabel('Steps')
@@ -342,7 +337,7 @@ test_image = X_test[0:1]
 tinygrad_probs = model(test_image).softmax().numpy()
 print("tinygrad probabilities:", tinygrad_probs)
 ```
-###### tinygrad probabilities: [[2.9119146e-10 2.2247503e-13 1.2900699e-08 1.1292180e-08 5.5392816e-15 2.1924421e-14 7.2358327e-19 1.0000000e+00 2.9422734e-12 5.7311561e-10]]
+###### tinygrad probabilities: [[9.3983861e-09 6.8721730e-11 7.7753964e-07 5.7046219e-07 4.1008310e-13 8.9367888e-11 2.8149701e-17 9.9999869e-01 2.8185179e-10 4.4023501e-08]]
 :::
 ::: column
 #### PyTorch
@@ -353,7 +348,7 @@ with torch.no_grad():
     pytorch_probs = F.softmax(model(test_image), dim=1).cpu().numpy()
 print("PyTorch probabilities:", pytorch_probs)
 ```
-###### PyTorch probabilities: [[2.91191266e-10 2.22475182e-13 1.29006885e-08 1.12921708e-08 5.53927911e-15 2.19244111e-14 7.23579291e-19 1.00000000e+00 2.94227511e-12 5.73115444e-10]]
+###### PyTorch probabilities: [[9.3983630e-09 6.8721799e-11 7.7754157e-07 5.7046429e-07 4.1008307e-13 8.9367916e-11 2.8149701e-17 9.9999857e-01 2.8185207e-10 4.4023473e-08]]
 :::
 ::::
 
